@@ -16,13 +16,13 @@ const BaseTable = () => {
   const rerender = React.useReducer(() => ({}), {})[1];
   return (
     <>
-      <div className="p-2">
-        <Table striped responsive>
-          <thead className="table-dark">
+      <div className="p-2 custom-rt">
+        <Table striped responsive className="rt-table">
+          <thead className="table-dark rt-thead .-header">
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="rt-tr">
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
+                  <th key={header.id} className="rt-th">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -34,18 +34,18 @@ const BaseTable = () => {
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className="rt-tbody">
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
+              <tr key={row.id} className="rt-tr">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
+                  <td key={cell.id} className="rt-td">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
               </tr>
             ))}
           </tbody>
-          <tfoot>
+          {/* <tfoot>
             {table.getFooterGroups().map((footerGroup) => (
               <tr key={footerGroup.id}>
                 {footerGroup.headers.map((header) => (
@@ -60,7 +60,7 @@ const BaseTable = () => {
                 ))}
               </tr>
             ))}
-          </tfoot>
+          </tfoot> */}
         </Table>
         <div className="h-4" />
         <button onClick={() => rerender()} className="border p-2">
