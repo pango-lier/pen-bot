@@ -9,7 +9,7 @@ function Crawler(props) {
   return (
     <Row>
       <Col sm="12">
-        <Card title="Basic" code="BaseTable">
+        <Card code="BaseTable">
           <Switch>
             <Route exact path={match.path} component={BaseTable} />
           </Switch>

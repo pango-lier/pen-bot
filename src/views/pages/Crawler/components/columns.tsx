@@ -1,6 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import Action from "./Action";
 import CheckboxTable from "./CheckboxTable";
+import Tooltip from "./Tooltip";
 
 interface Crawler {
   checkbox?: any;
@@ -50,32 +51,44 @@ export const COLUMNS = [
         </>
       </div>
     ),
+    size:70,
+    maxSize:70
   }),
   columnHelper.accessor("id", {
     cell: (info) => info.getValue(),
+    size:100,
+    maxSize:100
   }),
   columnHelper.accessor((row) => row.change_level, {
-    id: "changechange_level_type",
+    id: "change_level",
     cell: (info) => <i>{info.getValue()}</i>,
     header: () => <span>Last Name</span>,
+    size:100,
+    maxSize:100
   }),
   columnHelper.accessor("change_type", {
     header: () => "change_type",
-    cell: (info) => info.renderValue(),
+    cell: (info) => <Tooltip id={'c'+info.row.id} message={info.getValue()}/>,
+    size:400,
+    maxSize:400
   }),
   columnHelper.accessor("from", {
     header: () => <span>Visits</span>,
+    size:200,
   }),
   columnHelper.accessor("to", {
     header: "to",
+    size:200,
   }),
   columnHelper.accessor("date_and_time", {
     header: "date and time",
+    size:200,
   }),
   {
     header: "Actions",
     cell: (info) => {
       return <Action />;
     },
+    size:300,
   },
 ];
