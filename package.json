@@ -3,6 +3,7 @@
   "version": "8.0.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.7.1",
     "@casl/ability": "5.2.2",
     "@casl/react": "2.1.1",
     "@craco/craco": "6.4.2",
@@ -33,6 +34,8 @@
     "draftjs-to-html": "0.9.1",
     "file-saver": "2.0.2",
     "flatpickr": "4.6.3",
+    "graphql": "^16.6.0",
+    "graphql-ws": "^5.11.2",
     "history": "5.1.0",
     "html-to-draftjs": "1.5.0",
     "i18next": "21.4.0",

@@ -35,6 +35,8 @@ import './assets/scss/style.scss'
 
 // ** Service Worker
 import * as serviceWorker from './serviceWorker'
+import { ApolloProvider } from '@apollo/client'
+import apolloClient from 'api/grapth/apolloClient'
 
 // ** Lazy load app
 const LazyApp = lazy(() => import('./App'))
@@ -42,10 +44,12 @@ const LazyApp = lazy(() => import('./App'))
 ReactDOM.render(
   <Provider store={store}>
     <Suspense fallback={<Spinner />}>
+    <ApolloProvider client={apolloClient}>
       <ThemeContext>
         <LazyApp />
         <ToastContainer newestOnTop />
       </ThemeContext>
+      </ApolloProvider>
     </Suspense>
   </Provider>,
   document.getElementById('root')

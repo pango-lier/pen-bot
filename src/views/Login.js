@@ -4,13 +4,51 @@ import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'reactstrap'
 import '@styles/react/pages/page-authentication.scss'
+import { useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { setStorageData, STORAGE_CONSTANTS } from 'utility/localStorage'
+import { LOGIN } from 'api/grapth/Auth'
+import { notify } from 'utility/notify'
 
 const LoginCover = () => {
   const { skin } = useSkin()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const [onLogin] = useMutation(LOGIN, {
+    onCompleted: (result) => {
+      console.log(result);
+    },
+    onError: (error) => {
+      console.log(error);
+      notify(error.message, 'error')
+    },
+  });
 
   const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
-    source = require(`@src/assets/images/pages/${illustration}`).default
+  source = require(`@src/assets/images/pages/${illustration}`).default
 
+  const onChangeEmail = (e) => {
+    if (e && e?.target) {
+      setEmail(e.target.value);
+    }
+  }
+  const onChangePassword = (e) => {
+    if (e && e?.target) {
+      setPassword(e.target.value);
+    }
+  }
+
+
+  const login = () => {
+    console.log(email, password);
+    onLogin({
+      variables: {
+        email: email,
+        password: password,
+      },
+    });
+  }
   return (
     <div className='auth-wrapper auth-cover'>
       <Row className='auth-inner m-0'>
@@ -81,7 +119,7 @@ const LoginCover = () => {
                 <Label className='form-label' for='login-email'>
                   Email
                 </Label>
-                <Input type='email' id='login-email' placeholder='john@example.com' autoFocus />
+                <Input value={email} onChange={(e) => onChangeEmail(e)} type='email' id='login-email' placeholder='john@example.com' autoFocus />
               </div>
               <div className='mb-1'>
                 <div className='d-flex justify-content-between'>
@@ -92,7 +130,7 @@ const LoginCover = () => {
                     <small>Forgot Password?</small>
                   </Link>
                 </div>
-                <InputPasswordToggle className='input-group-merge' id='login-password' />
+                <InputPasswordToggle value={password} onChange={(e) => onChangePassword(e)} className='input-group-merge' id='login-password' />
               </div>
               <div className='form-check mb-1'>
                 <Input type='checkbox' id='remember-me' />
@@ -100,7 +138,7 @@ const LoginCover = () => {
                   Remember Me
                 </Label>
               </div>
-              <Button color='primary' tag={Link} block to='/'>
+              <Button color='primary' onClick={() => login()}>
                 Sign in
               </Button>
             </Form>
