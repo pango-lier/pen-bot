@@ -1,5 +1,5 @@
 import { useSkin } from '@hooks/useSkin'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'reactstrap'
@@ -11,6 +11,7 @@ import { LOGIN } from 'api/grapth/Auth'
 import { notify } from 'utility/notify'
 
 const LoginCover = () => {
+  const history = useHistory();
   const { skin } = useSkin()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,6 +19,10 @@ const LoginCover = () => {
   const [onLogin] = useMutation(LOGIN, {
     onCompleted: (result) => {
       console.log(result);
+      setStorageData(STORAGE_CONSTANTS.ACCESS_TOKEN, result.login.accessToken);
+      setStorageData(STORAGE_CONSTANTS.REFRESH_TOKEN, result.login.refreshToken);
+      setStorageData(STORAGE_CONSTANTS.USER_DATA, result.login.userData);
+      history.push('/');
     },
     onError: (error) => {
       console.log(error);
@@ -26,7 +31,7 @@ const LoginCover = () => {
   });
 
   const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
-  source = require(`@src/assets/images/pages/${illustration}`).default
+    source = require(`@src/assets/images/pages/${illustration}`).default
 
   const onChangeEmail = (e) => {
     if (e && e?.target) {
@@ -40,9 +45,9 @@ const LoginCover = () => {
   }
 
 
-  const login = () => {
+  const login = async () => {
     console.log(email, password);
-    onLogin({
+    await onLogin({
       variables: {
         email: email,
         password: password,
