@@ -3,7 +3,7 @@ import Action from "./Action";
 import CheckboxTable from "./CheckboxTable";
 import Tooltip from "./Tooltip";
 
-interface Crawler {
+export interface Crawler {
   checkbox?: any;
   id: string | number;
   change_level: string;

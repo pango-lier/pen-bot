@@ -4,14 +4,32 @@ import MOCK_DATA from "./MOCK_DATA.json";
 import {
   flexRender,
   getCoreRowModel,
+  PaginationState,
   useReactTable,
 } from "@tanstack/react-table";
 import { Table } from "reactstrap";
+import PaginationController from "./PaginationController";
 const BaseTable = () => {
+  const [{ pageIndex, pageSize }, setPagination] =
+    React.useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: 10,
+    });
+
   const table = useReactTable({
     data: useMemo(() => MOCK_DATA, []),
     columns: useMemo(() => COLUMNS, []),
     getCoreRowModel: getCoreRowModel(),
+    pageCount: 5,
+    state: {
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
+    },
+    onPaginationChange: setPagination,
+
+    manualPagination: true,
   });
   const rerender = React.useReducer(() => ({}), {})[1];
   return (
@@ -63,23 +81,8 @@ const BaseTable = () => {
               </tr>
             ))}
           </tbody>
-          {/* <tfoot>
-            {table.getFooterGroups().map((footerGroup) => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </tfoot> */}
         </Table>
+        <PaginationController {...table} />
         <div className="h-4" />
         <button onClick={() => rerender()} className="border p-2">
           Rerender
