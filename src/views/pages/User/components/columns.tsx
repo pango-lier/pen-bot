@@ -1,9 +1,16 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ChevronDown, ChevronsDown, ChevronsUp, ChevronUp } from "react-feather";
+import {
+  ChevronDown,
+  ChevronRight,
+  ChevronsDown,
+  ChevronsRight,
+  ChevronsUp,
+  ChevronUp,
+} from "react-feather";
 import { Button } from "reactstrap";
 import Action from "./Action";
 import CheckboxTable from "./CheckboxTable";
-import Tooltip from "../../components/Tooltip";
+import { Tooltip } from "../../components/Tooltip";
 
 export interface UserI {
   checkbox?: any;
@@ -35,23 +42,25 @@ export const COLUMNS = [
         {""}
         <span
           {...{
-            style: { cursor: 'pointer' },
+            style: { cursor: "pointer" },
             onClick: table.getToggleAllRowsExpandedHandler(),
           }}
         >
-          {table.getIsAllRowsExpanded() ? <ChevronsUp /> : <ChevronsDown />}
+          {table.getIsAllRowsExpanded() ? <ChevronsDown /> : <ChevronsRight />}
         </span>
       </>
     ),
     cell: ({ row, getValue }) => (
       <div
-        style={{
-          // Since rows are flattened by default,
-          // we can use the row.depth property
-          // and paddingLeft to visually indicate the depth
-          // of the row
-          // paddingLeft: `${row.depth * 2}rem`,
-        }}
+        style={
+          {
+            // Since rows are flattened by default,
+            // we can use the row.depth property
+            // and paddingLeft to visually indicate the depth
+            // of the row
+            // paddingLeft: `${row.depth * 2}rem`,
+          }
+        }
       >
         <>
           <CheckboxTable
@@ -66,42 +75,44 @@ export const COLUMNS = [
             <span
               {...{
                 onClick: row.getToggleExpandedHandler(),
-                style: { cursor: 'pointer' },
+                style: { cursor: "pointer" },
               }}
             >
-              {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+              {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
             </span>
           ) : (
-            ''
+            ""
           )}
         </>
       </div>
     ),
     size: 30,
-    maxSize: 50
+    maxSize: 50,
   }),
   columnHelper.accessor("id", {
     cell: (info) => info.getValue(),
     size: 20,
-    maxSize: 20
+    maxSize: 20,
   }),
   columnHelper.accessor((row) => row.name, {
     id: "name",
     cell: (info) => <i>{info.getValue()}</i>,
     header: () => <span>Name</span>,
     size: 100,
-    maxSize: 100
+    maxSize: 100,
   }),
   columnHelper.accessor("username", {
     header: () => "username",
-    cell: (info) => <Tooltip id={'c' + info.row.id} message={info.getValue()} />,
+    cell: (info) => (
+      <Tooltip id={"c" + info.row.id} message={info.getValue() ?? ""} />
+    ),
     size: 100,
-    maxSize: 100
+    maxSize: 100,
   }),
   columnHelper.accessor("email", {
     header: () => <span>Email</span>,
     size: 100,
-    maxSize: 200
+    maxSize: 200,
   }),
   columnHelper.accessor("active", {
     header: "active",

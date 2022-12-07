@@ -1,38 +1,39 @@
-import { useSkin } from '@hooks/useSkin'
+// ** React Imports
 import { Link, useHistory } from 'react-router-dom'
-import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
-import InputPasswordToggle from '@components/input-password-toggle'
-import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'reactstrap'
-import '@styles/react/pages/page-authentication.scss'
-import { useState } from 'react'
-import { useMutation } from '@apollo/client'
-import { setStorageData, STORAGE_CONSTANTS } from 'utility/localStorage'
-import { LOGIN } from 'api/grapth/Auth'
-import { notify } from 'utility/notify'
 
-const LoginCover = () => {
-  const history = useHistory();
+// ** Custom Hooks
+import { useSkin } from '@hooks/useSkin'
+
+// ** Icons Imports
+import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
+
+// ** Custom Components
+import InputPasswordToggle from '@components/input-password-toggle'
+
+// ** Reactstrap Imports
+import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'reactstrap'
+
+// ** Styles
+import '@styles/react/pages/page-authentication.scss'
+import { CREATE_USER } from 'api/grapth/user/registerUser'
+import { notify } from 'utility/notify'
+import { useMutation } from '@apollo/client'
+import { setStorageData } from 'utility/localStorage'
+import { useState } from 'react'
+
+const RegisterCover = () => {
+  // ** Hooks
   const { skin } = useSkin()
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
 
-  const [onLogin] = useMutation(LOGIN, {
-    onCompleted: (result) => {
-      console.log(result);
-      setStorageData(STORAGE_CONSTANTS.ACCESS_TOKEN, result.login.accessToken);
-      setStorageData(STORAGE_CONSTANTS.REFRESH_TOKEN, result.login.refreshToken);
-      setStorageData(STORAGE_CONSTANTS.USER_DATA, result.login.userData);
-      history.push('/');
-    },
-    onError: (error) => {
-      console.log(error);
-      notify(error.message, 'error')
-    },
-  });
-
-  const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
-    source = require(`@src/assets/images/pages/${illustration}`).default
-
+  const history = useHistory();
+  const onChangeName = (e) => {
+    if (e && e?.target) {
+      setName(e.target.value);
+    }
+  }
   const onChangeEmail = (e) => {
     if (e && e?.target) {
       setEmail(e.target.value);
@@ -44,16 +45,31 @@ const LoginCover = () => {
     }
   }
 
-
-  const login = async () => {
-    console.log(email, password);
-    await onLogin({
+  const [onCreateUser] = useMutation(CREATE_USER, {
+    onCompleted: (result) => {
+      console.log(result);
+      history.push('/login');
+      notify("Sig Up is success.", 'success')
+    },
+    onError: (error) => {
+      console.log(error);
+      notify(error.message, 'error')
+    },
+  });
+  const onSubmit = (e) => {
+    e.preventDefault();
+    onCreateUser({
       variables: {
         email: email,
         password: password,
+        name: name
       },
     });
   }
+
+  const illustration = skin === 'dark' ? 'register-v2-dark.svg' : 'register-v2.svg',
+    source = require(`@src/assets/images/pages/${illustration}`).default
+
   return (
     <div className='auth-wrapper auth-cover'>
       <Row className='auth-inner m-0'>
@@ -114,43 +130,47 @@ const LoginCover = () => {
           </div>
         </Col>
         <Col className='d-flex align-items-center auth-bg px-2 p-lg-5' lg='4' sm='12'>
-          <Col className='px-xl-2 mx-auto' sm='8' md='6' lg='12'>
+          <Col className='px-xl-2 mx-auto' xs='12' sm='8' md='6' lg='12'>
             <CardTitle tag='h2' className='fw-bold mb-1'>
-              Welcome to Vuexy! 👋
+              Adventure starts here 🚀
             </CardTitle>
-            <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText>
-            <Form className='auth-login-form mt-2' onSubmit={e => e.preventDefault()}>
+            <CardText className='mb-2'>Make your app management easy and fun!</CardText>
+            <Form className='auth-register-form mt-2' onSubmit={e => onSubmit(e)}>
               <div className='mb-1'>
-                <Label className='form-label' for='login-email'>
+                <Label className='form-label' for='register-name'>
+                  Name
+                </Label>
+                <Input type='text' id='register-name' placeholder='johndoe' autoFocus onChange={(e) => onChangeName(e)} />
+              </div>
+              <div className='mb-1'>
+                <Label className='form-label' for='register-email'>
                   Email
                 </Label>
-                <Input value={email} onChange={(e) => onChangeEmail(e)} type='email' id='login-email' placeholder='john@example.com' autoFocus />
+                <Input type='email' id='register-email' placeholder='john@example.com' onChange={(e) => onChangeEmail(e)} />
               </div>
               <div className='mb-1'>
-                <div className='d-flex justify-content-between'>
-                  <Label className='form-label' for='login-password'>
-                    Password
-                  </Label>
-                  <Link to='/pages/forgot-password-cover'>
-                    <small>Forgot Password?</small>
-                  </Link>
-                </div>
-                <InputPasswordToggle value={password} onChange={(e) => onChangePassword(e)} className='input-group-merge' id='login-password' />
+                <Label className='form-label' for='register-password'  >
+                  Password
+                </Label>
+                <InputPasswordToggle className='input-group-merge' id='register-password' onChange={(e) => onChangePassword(e)} />
               </div>
               <div className='form-check mb-1'>
-                <Input type='checkbox' id='remember-me' />
-                <Label className='form-check-label' for='remember-me'>
-                  Remember Me
+                <Input type='checkbox' id='terms' />
+                <Label className='form-check-label' for='terms'>
+                  I agree to
+                  <a className='ms-25' href='/' onClick={e => e.preventDefault()}>
+                    privacy policy & terms
+                  </a>
                 </Label>
               </div>
-              <Button color='primary' onClick={() => login()}>
-                Sign in
+              <Button color='primary' block>
+                Sign up
               </Button>
             </Form>
             <p className='text-center mt-2'>
-              <span className='me-25'>New on our platform?</span>
-              <Link to='/pages/register-cover'>
-                <span>Create an account</span>
+              <span className='me-25'>Already have an account?</span>
+              <Link to='/pages/login-cover'>
+                <span>Sign in instead</span>
               </Link>
             </p>
             <div className='divider my-2'>
@@ -177,4 +197,4 @@ const LoginCover = () => {
   )
 }
 
-export default LoginCover
+export default RegisterCover

@@ -1,8 +1,14 @@
 import React from "react";
 import { UncontrolledTooltip } from "reactstrap";
 
-function Tooltip(prop) {
-  const { message, id } = prop;
+export interface ITooltip {
+  message: string;
+  id: string;
+}
+
+
+export const Tooltip: React.FC<ITooltip> = (props) => {
+  const { message, id } = props;
   const [ready, setReady] = React.useState(false);
 
   React.useEffect(() => {
@@ -21,5 +27,4 @@ function Tooltip(prop) {
       )}
     </>
   );
-}
-export default Tooltip;
+};

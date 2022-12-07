@@ -22,11 +22,16 @@ const Routes = [
   },
   {
     path: '/login',
-    component: lazy(() => import('../../views/Login')),
+    component: lazy(() => import('../../views/pages/authentication/Login')),
     layout: 'BlankLayout',
     meta: {
       authRoute: true
     }
+  },
+  {
+    path: '/pages/register-cover',
+    component: lazy(() => import('../../views/pages/authentication/RegisterCover')),
+    layout: 'BlankLayout'
   },
   {
     path: '/error',

@@ -7,47 +7,44 @@ import {
   DropdownToggle,
   UncontrolledDropdown,
 } from "reactstrap";
+import { ButtonTooltip } from "views/pages/components/ButtonTooltip";
+import { Tooltip } from "views/pages/components/Tooltip";
+
 import ModalGroup from "./actions/ModalGroup";
 
 const Action = (row: any) => {
   console.log(row);
-  const [isOpenModalGroup, setIsOpenModalGroup] = useState<boolean>(false)
+  const [isOpenModalGroup, setIsOpenModalGroup] = useState<boolean>(false);
   const onCreateNewGroup = (row) => {
     setIsOpenModalGroup(true);
-  }
+  };
   const onSetIsOpenModalGroup = (isOpen: boolean) => {
     setIsOpenModalGroup(isOpen);
-  }
+  };
   return (
     <>
       <div className="d-flex justify-content-around align-content-between flex-nowrap">
-        <Button
-          size="sm"
+        <ButtonTooltip
+          id={"create-account" + row.id}
+          message={"Create new account"}
+          onHandle={() => onCreateNewGroup(row)}
+          icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
           color="primary"
-          className="btn-icon ml-1"
-          onClick={() => onCreateNewGroup(row)}
-        >
-          {" "}
-          <i className="fa-solid fa-pen" style={{ fontSize: 12 }} />
-        </Button>
-        <Button
-          size="sm"
-          color="primary"
-          className="btn-icon ml-1"
-          onClick={(e) => e.preventDefault()}
-        >
-          {" "}
-          <i className="fa-solid fa-pen" style={{ fontSize: 12 }} />
-        </Button>
-        <Button
-          size="sm"
-          color="primary"
-          className="btn-icon ml-1"
-          onClick={(e) => e.preventDefault()}
-        >
-          {" "}
-          <i className="fa-solid fa-pen" style={{ fontSize: 12 }} />
-        </Button>
+        />
+        <ButtonTooltip
+          color="success"
+          id={"create-account" + row.id}
+          message={"Create new account"}
+          onHandle={() => onCreateNewGroup(row)}
+          icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
+        />
+        <ButtonTooltip
+          id={"create-account" + row.id}
+          message={"Create new account"}
+          onHandle={() => onCreateNewGroup(row)}
+          icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
+          color="danger"
+        />
         <UncontrolledDropdown>
           <DropdownToggle
             className="icon-btn hide-arrow"
@@ -69,9 +66,12 @@ const Action = (row: any) => {
           </DropdownMenu>
         </UncontrolledDropdown>
       </div>
-      {
-        isOpenModalGroup && (<ModalGroup isOpenModalGroup={isOpenModalGroup} setIsOpenModalGroup={onSetIsOpenModalGroup} />)
-      }
+      {isOpenModalGroup && (
+        <ModalGroup
+          isOpenModalGroup={isOpenModalGroup}
+          setIsOpenModalGroup={onSetIsOpenModalGroup}
+        />
+      )}
     </>
   );
 };
