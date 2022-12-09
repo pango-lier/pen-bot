@@ -16,7 +16,7 @@ import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'react
 // ** Styles
 import '@styles/react/pages/page-authentication.scss'
 import { CREATE_USER } from 'api/grapth/user/registerUser'
-import { notify } from 'utility/notify'
+import { notifyError, notifySuccess } from 'utility/notify'
 import { useMutation } from '@apollo/client'
 import { setStorageData } from 'utility/localStorage'
 import { useState } from 'react'
@@ -49,11 +49,10 @@ const RegisterCover = () => {
     onCompleted: (result) => {
       console.log(result);
       history.push('/login');
-      notify("Sig Up is success.", 'success')
+      notifySuccess("Sig up is success.");
     },
     onError: (error) => {
-      console.log(error);
-      notify(error.message, 'error')
+      notifyError(error);
     },
   });
   const onSubmit = (e) => {

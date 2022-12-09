@@ -2,7 +2,6 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 import { Card, Col, Row } from "reactstrap";
 import BaseTable from "./components/BaseTable";
-import '../../../assets/scss/custom-react-table.scss';
 
 function Crawler(props) {
   const { match } = props;

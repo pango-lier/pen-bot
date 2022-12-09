@@ -13,22 +13,25 @@ import { GET_USERS } from "api/grapth/user/getUsers";
 import Group from "./sub";
 const BaseTable = () => {
   const [data, setData] = useState<UserI[]>([]);
-  const [expanded, setExpanded] = React.useState<ExpandedState>({})
+  const [expanded, setExpanded] = React.useState<ExpandedState>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(25);
   const [getUsers] = useLazyQuery(GET_USERS, {
-    variables: { paging: { limit: perPage, offset: (currentPage - 1) * perPage } },
-    fetchPolicy: 'network-only',
-    onError: (error) => {
+    variables: {
+      paging: { limit: perPage, offset: (currentPage - 1) * perPage },
     },
+    fetchPolicy: "network-only",
+    onError: (error) => {},
   });
   const fetchData = async () => {
-    const response = await getUsers({ variables: { paging: { limit: 100, offset: 0 } } })
-    setData(response.data.userDtos.nodes)
-  }
+    const response = await getUsers({
+      variables: { paging: { limit: 100, offset: 0 } },
+    });
+    setData(response.data.userDtos.nodes);
+  };
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
   const table = useReactTable({
     data: useMemo(() => data, [data]),
     columns: useMemo(() => COLUMNS, []),
@@ -45,28 +48,27 @@ const BaseTable = () => {
   return (
     <>
       <div>
-        <Table striped>
+        <Table>
           <thead className="table-dark">
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} >
+              <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     {...{
                       key: header.id,
                       style: {
-                        width: header.getSize(),
-                        maxWidth: header.getSize(),
-                        minWidth: header.getSize(),
+                        width: header.column.columnDef.size,
+                        maxWidth: header.column.columnDef.maxSize,
+                        minWidth: header.column.columnDef.minSize,
                       },
                     }}
-
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </th>
                 ))}
               </tr>
@@ -81,27 +83,27 @@ const BaseTable = () => {
                       {...{
                         key: cell.id,
                         style: {
-                          width: cell.column.getSize(),
-                          maxWidth: cell.column.getSize(),
-                          minWidth: cell.column.getSize(),
+                          width: cell.column.columnDef.size,
+                          maxWidth: cell.column.columnDef.maxSize,
+                          minWidth: cell.column.columnDef.minSize,
                         },
                       }}
-
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </td>
                   ))}
                 </tr>
-                {
-                  row.getIsExpanded() && (
-                    <tr>
-                      {/* 2nd row is a custom 1 cell row */}
-                      <td colSpan={row.getVisibleCells().length}>
-                        <Group />
-                      </td>
-                    </tr>
-                  )
-                }
+                {row.getIsExpanded() && (
+                  <tr>
+                    {/* 2nd row is a custom 1 cell row */}
+                    <td colSpan={row.getVisibleCells().length}>
+                      <Group user={row.original} />
+                    </td>
+                  </tr>
+                )}
               </Fragment>
             ))}
           </tbody>

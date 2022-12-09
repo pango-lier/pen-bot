@@ -12,7 +12,10 @@ const AuthRoutes = [
   {
     path: '/pages/login-basic',
     component: lazy(() => import('../../views/pages/authentication/LoginBasic')),
-    layout: 'BlankLayout'
+    layout: 'BlankLayout',
+    meta: {
+      authRoute: true
+    }
   },
   {
     path: '/pages/login-cover',
@@ -27,7 +30,10 @@ const AuthRoutes = [
   {
     path: '/pages/register-cover',
     component: lazy(() => import('../../views/pages/authentication/RegisterCover')),
-    layout: 'BlankLayout'
+    layout: 'BlankLayout',
+    meta: {
+      authRoute: true
+    }
   },
   {
     path: '/forgot-password',

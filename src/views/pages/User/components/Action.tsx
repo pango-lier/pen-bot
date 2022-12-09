@@ -8,14 +8,14 @@ import {
   UncontrolledDropdown,
 } from "reactstrap";
 import { ButtonTooltip } from "views/pages/components/ButtonTooltip";
-import { Tooltip } from "views/pages/components/Tooltip";
 
 import ModalGroup from "./actions/ModalGroup";
+import { IUserProps, UserI } from "./columns";
 
-const Action = (row: any) => {
-  console.log(row);
+const Action = ({ user }: IUserProps) => {
+  console.log(user);
   const [isOpenModalGroup, setIsOpenModalGroup] = useState<boolean>(false);
-  const onCreateNewGroup = (row) => {
+  const onCreateNewGroup = (user) => {
     setIsOpenModalGroup(true);
   };
   const onSetIsOpenModalGroup = (isOpen: boolean) => {
@@ -25,23 +25,23 @@ const Action = (row: any) => {
     <>
       <div className="d-flex justify-content-around align-content-between flex-nowrap">
         <ButtonTooltip
-          id={"create-account" + row.id}
+          id={"create-account" + user.id}
           message={"Create new account"}
-          onHandle={() => onCreateNewGroup(row)}
+          onHandle={() => onCreateNewGroup(user)}
           icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
           color="primary"
         />
         <ButtonTooltip
           color="success"
-          id={"create-account" + row.id}
+          id={"create-account" + user.id}
           message={"Create new account"}
-          onHandle={() => onCreateNewGroup(row)}
+          onHandle={() => onCreateNewGroup(user)}
           icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
         />
         <ButtonTooltip
-          id={"create-account" + row.id}
+          id={"create-account" + user.id}
           message={"Create new account"}
-          onHandle={() => onCreateNewGroup(row)}
+          onHandle={() => onCreateNewGroup(user)}
           icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
           color="danger"
         />
@@ -68,6 +68,7 @@ const Action = (row: any) => {
       </div>
       {isOpenModalGroup && (
         <ModalGroup
+          user={user}
           isOpenModalGroup={isOpenModalGroup}
           setIsOpenModalGroup={onSetIsOpenModalGroup}
         />

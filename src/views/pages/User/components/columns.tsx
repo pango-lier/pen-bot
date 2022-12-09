@@ -15,7 +15,7 @@ import { Tooltip } from "../../components/Tooltip";
 export interface UserI {
   checkbox?: any;
   expanded?: any;
-  id: string | number;
+  id: string;
   name: string;
   email: string;
   username: string;
@@ -23,6 +23,10 @@ export interface UserI {
   rolesId: number;
   createdAt: Date;
   actions?: any;
+}
+
+export interface IUserProps {
+  user: UserI;
 }
 
 const columnHelper = createColumnHelper<UserI>();
@@ -86,47 +90,58 @@ export const COLUMNS = [
         </>
       </div>
     ),
-    size: 30,
-    maxSize: 50,
+    size: 15,
+    minSize: 10,
+    maxSize: 15,
   }),
   columnHelper.accessor("id", {
     cell: (info) => info.getValue(),
-    size: 20,
+    size: 15,
+    minSize: 10,
     maxSize: 20,
   }),
   columnHelper.accessor((row) => row.name, {
     id: "name",
     cell: (info) => <i>{info.getValue()}</i>,
     header: () => <span>Name</span>,
-    size: 100,
-    maxSize: 100,
+    size: 50,
+    minSize: 20,
+    maxSize: 50,
   }),
   columnHelper.accessor("username", {
     header: () => "username",
     cell: (info) => (
       <Tooltip id={"c" + info.row.id} message={info.getValue() ?? ""} />
     ),
-    size: 100,
-    maxSize: 100,
+    size: 20,
+    minSize: 20,
+    maxSize: 50,
   }),
   columnHelper.accessor("email", {
     header: () => <span>Email</span>,
-    size: 100,
-    maxSize: 200,
+    size: 50,
+    minSize: 50,
+    maxSize: 50,
   }),
   columnHelper.accessor("active", {
     header: "active",
-    size: 100,
+    size: 40,
+    minSize: 40,
+    maxSize: 40,
   }),
   columnHelper.accessor("createdAt", {
     header: "Date",
-    size: 100,
+    size: 50,
+    minSize: 50,
+    maxSize: 50,
   }),
   {
     header: "Actions",
     cell: (info) => {
-      return <Action row={info.row.original} />;
+      return <Action user={info.row.original} />;
     },
-    size: 150,
+    size: 30,
+    minSize: 30,
+    maxSize: 40,
   },
 ];

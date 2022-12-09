@@ -34,6 +34,8 @@ import './@core/assets/fonts/feather/iconfont.css'
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import './@core/scss/core.scss'
 import './assets/scss/style.scss'
+import './assets/scss/react-table.scss'
+
 
 // ** Service Worker
 import * as serviceWorker from './serviceWorker'
@@ -46,14 +48,14 @@ const LazyApp = lazy(() => import('./App'))
 ReactDOM.render(
   <Provider store={store}>
     <Suspense fallback={<Spinner />}>
-        <ApolloProvider client={apolloClient}>
+      <ApolloProvider client={apolloClient}>
         <AbilityContext.Provider value={ability}>
           <ThemeContext>
             <LazyApp />
             <ToastContainer newestOnTop />
           </ThemeContext>
-          </AbilityContext.Provider>
-        </ApolloProvider>
+        </AbilityContext.Provider>
+      </ApolloProvider>
     </Suspense>
   </Provider>,
   document.getElementById('root')

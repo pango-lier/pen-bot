@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { LOGIN } from 'api/grapth/Auth'
 import { useDispatch } from 'react-redux'
-import { notify } from 'utility/notify'
+import { notifyError } from 'utility/notify'
 import { getHomeRouteForLoggedInUser } from 'utility/Utils'
 import { handleLogin } from 'redux/authentication'
 
@@ -25,8 +25,7 @@ const LoginCover = () => {
       history.push(getHomeRouteForLoggedInUser('admin'))
     },
     onError: (error) => {
-      console.log(error);
-      notify(error.message, 'error')
+      notifyError(error);
     },
   });
 
@@ -124,7 +123,7 @@ const LoginCover = () => {
                 <Label className='form-label' for='login-email'>
                   Email
                 </Label>
-                <Input value={email} onChange={(e) => onChangeEmail(e)} type='email' id='login-email' placeholder='john@example.com' autoFocus />
+                <Input value={email} onChange={(e) => onChangeEmail(e)} type='text' id='login-email' placeholder='john@example.com' autoFocus />
               </div>
               <div className='mb-1'>
                 <div className='d-flex justify-content-between'>

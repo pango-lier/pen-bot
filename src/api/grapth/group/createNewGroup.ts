@@ -1,21 +1,37 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
+
+export enum GroupEnum {
+  GOLOGIN = "GOLOGIN",
+  NONE = "NONE",
+}
 
 export const CREATE_NEW_GROUP = gql`
-	mutaion getUsers($paging: OffsetPaging!, $filter: GroupDtoFilter, $sorting: [GroupDtoSort!]) {
-		groupDtos(paging: $paging, filter: $filter, sorting: $sorting) {
-			totalCount
-			pageInfo {
-				hasNextPage
-				hasPreviousPage
-			}
-			nodes {
-				id
-                name
-                secrectName
-                secrectKey
-				groupType
-                createdAt
-			}
-		}
-	}
+  mutation createOneGroupDto(
+    $name: String!
+    $secretKey: String
+    $secretName: String
+    $groupType: GroupEnum
+    $userId: ID
+  ) {
+    createOneGroupDto(
+      input: {
+        groupDto: {
+          name: $name
+          secretKey: $secretKey
+          secretName: $secretName
+          groupType: $groupType
+          userId: $userId
+        }
+      }
+    ) {
+      id
+      name
+      secretKey
+      secretName
+      groupType
+      createdAt
+      updatedAt
+      userId
+    }
+  }
 `;

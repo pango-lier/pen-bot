@@ -11,9 +11,10 @@ export const GET_USER_GROUP = gql`
 			nodes {
 				id
                 name
-                secrectName
-                secrectKey
+                secretName
+                secretKey
 				groupType
+				userId
                 createdAt
 			}
 		}

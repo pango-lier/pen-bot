@@ -1,8 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ChevronsDown, ChevronsRight, ChevronsUp } from "react-feather";
+import { ChevronsDown, ChevronsUp } from "react-feather";
 import { Button } from "reactstrap";
 import { Tooltip } from "views/pages/components/Tooltip";
-import { UserI } from "../../columns";
 import Action from "./Action";
 import CheckboxTable from "./CheckboxTable";
 
@@ -16,17 +15,12 @@ export interface SubUserGroupI {
   expanded?: any;
   id: string | number;
   name: string;
-  groupType: GroupEnum;
-  secretName?: string;
-  secretKey?: string;
-  userId?: string;
+  active: boolean;
+  proxyId: string;
+  proxyType: string;
+  groupId: number;
   createdAt: Date;
   actions?: any;
-}
-
-export interface IUserGroupProps {
-  user: UserI;
-  group: SubUserGroupI;
 }
 
 const columnHelper = createColumnHelper<SubUserGroupI>();
@@ -73,7 +67,7 @@ export const COLUMNS = [
                 onClick: row.getToggleExpandedHandler(),
               }}
             >
-              {row.getIsExpanded() ? <ChevronsDown /> : <ChevronsRight />}
+              {row.getIsExpanded() ? <ChevronsUp /> : <ChevronsDown />}
             </span>
           ) : (
             ""
@@ -99,8 +93,8 @@ export const COLUMNS = [
     minSize: 50,
     maxSize: 100,
   }),
-  columnHelper.accessor("secretName", {
-    header: () => "Secret Name",
+  columnHelper.accessor("proxyId", {
+    header: () => "Proxy Id",
     cell: (info) => (
       <Tooltip id={"c" + info.row.id} message={info.getValue() ?? ""} />
     ),
@@ -108,13 +102,20 @@ export const COLUMNS = [
     minSize: 50,
     maxSize: 100,
   }),
-  columnHelper.accessor("secretKey", {
-    header: () => <span>Secret Key</span>,
+  columnHelper.accessor("proxyType", {
+    header: () => <span>Proxy Type</span>,
     size: 70,
     minSize: 50,
     maxSize: 100,
   }),
+  columnHelper.accessor("active", {
+    header: () => <span>Active</span>,
+    size: 30,
+    minSize: 20,
+    maxSize: 30,
+  }),
   columnHelper.accessor("createdAt", {
+    header: "Date",
     size: 70,
     minSize: 50,
     maxSize: 100,
@@ -122,7 +123,7 @@ export const COLUMNS = [
   {
     header: "Actions",
     cell: (info) => {
-      return <Action group={info.row.original} />;
+      return <Action row={info.row.original} />;
     },
     size: 30,
     minSize: 30,

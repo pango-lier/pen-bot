@@ -1,4 +1,5 @@
 import { useMutation } from "@apollo/client";
+import { CREATE_ACCOUNT } from "api/grapth/account/createAccount";
 import { CREATE_NEW_GROUP, GroupEnum } from "api/grapth/group/createNewGroup";
 import React, { useState } from "react";
 import ReactSelect from "react-select";
@@ -12,51 +13,47 @@ import {
   ModalFooter,
   ModalHeader,
 } from "reactstrap";
-import {
-  enumToFormatSelected,
-  enumToFormatSelectOptions,
-} from "utility/helper/enum";
 import { notifyError, notifySuccess } from "utility/notify";
-import { UserI } from "../columns";
+import { SubUserGroupI } from "../columns";
 
 interface IModalGroupProps {
-  user: UserI;
+  group: SubUserGroupI;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
 }
 const ModalGroup = ({
   isOpenModalGroup,
   setIsOpenModalGroup,
-  user,
+  group,
 }: IModalGroupProps) => {
   const [name, setName] = useState<String>("");
-  const [secretKey, setSecretKey] = useState<String>("");
-  const [secretName, setSecretName] = useState<String>("");
-  const [groupType, setGroupType] = useState<GroupEnum>(GroupEnum.NONE);
+  const [active, setActive] = useState<number>(1);
+  const [proxyId, setProxyId] = useState<String>("");
+  const [proxyType, setProxyType] = useState<String>("");
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
       setName(e.target.value);
     }
   };
-  const onChangeSecretKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeActive = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
-      setSecretKey(e.target.value);
+      setActive(parseInt(e.target.value));
     }
   };
-  const onChangeSecretName = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeProxyId = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
-      setSecretName(e.target.value);
+      setProxyId(e.target.value);
     }
   };
 
-  const onChangeGroupType = (e) => {
-    if (e) {
-      setGroupType(e.value);
+  const onChangeProxyType = (e) => {
+    if (e && e?.target) {
+      setProxyType(e.value);
     }
   };
 
-  const [createOneGroupDto] = useMutation(CREATE_NEW_GROUP, {
+  const [createOneAccountDto] = useMutation(CREATE_ACCOUNT, {
     onCompleted: (result) => {
       notifySuccess("Sig up is success.");
     },
@@ -68,13 +65,13 @@ const ModalGroup = ({
   const create: React.FormEventHandler<HTMLButtonElement> = async (
     e: React.FormEvent<HTMLButtonElement>
   ) => {
-    await createOneGroupDto({
+    await createOneAccountDto({
       variables: {
         name,
-        secretKey,
-        secretName,
-        groupType,
-        userId: user.id,
+        active: active === 1,
+        proxyId,
+        proxyType,
+        groupId: group.id,
       },
     });
     setIsOpenModalGroup(!isOpenModalGroup);
@@ -102,37 +99,42 @@ const ModalGroup = ({
                 onChange={(e) => onChangeName(e)}
               />
             </div>
+
             <div className="mb-1">
-              <Label className="form-label">Basic</Label>
-              <ReactSelect
-                value={enumToFormatSelected(GroupEnum, groupType)}
-                className="react-select"
-                options={enumToFormatSelectOptions(GroupEnum)}
-                isClearable={false}
-                onChange={(e) => onChangeGroupType(e)}
+              <Label className="form-label" for="proxy-id">
+                Proxy Id
+              </Label>
+              <Input
+                id="proxy-id"
+                type="text"
+                placeholder="Proxy Id ..."
+                onChange={(e) => onChangeProxyId(e)}
               />
             </div>
             <div className="mb-1">
-              <Label className="form-label" for="register-secret-key">
-                Secret Key
+              <Label className="form-label" for="proxy-type">
+                Proxy Type
               </Label>
               <Input
+                id="proxy-type"
                 type="text"
-                id="register-secret-key"
-                placeholder="secret key ..."
-                onChange={(e) => onChangeSecretKey(e)}
+                placeholder="proxy type ..."
+                onChange={(e) => onChangeProxyType(e)}
               />
             </div>
             <div className="mb-1">
-              <Label className="form-label" for="register-secret-key">
-                Secret Name
+              <Label for="switch-primary" className="form-check-label">
+                Primary
               </Label>
-              <Input
-                type="text"
-                id="register-secret-key"
-                placeholder="secret key ..."
-                onChange={(e) => onChangeSecretName(e)}
-              />
+              <div className="form-switch form-check-primary">
+                <Input
+                  type="switch"
+                  id="switch-primary"
+                  name="primary"
+                  value={active}
+                  onChange={(e) => onChangeActive(e)}
+                />
+              </div>
             </div>
           </Form>
         </ModalBody>
