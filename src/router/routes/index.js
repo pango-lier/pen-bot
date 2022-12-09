@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import AuthRoutes from './Auth'
 
 // ** Document title
 const TemplateTitle = '%s - Vuexy React Admin Template'
@@ -10,29 +11,20 @@ const DefaultRoute = '/home'
 const Routes = [
   {
     path: '/home',
-    component: lazy(() => import('../../views/pages/Crawler'))
+    component: lazy(() => import('../../views/home/Home'))
   },
   {
     path: '/users',
-    component: lazy(() => import('../../views/pages/User'))
+    component: lazy(() => import('../../views/pages/User')),
   },
   {
     path: '/second-page',
-    component: lazy(() => import('../../views/SecondPage'))
-  },
-  {
-    path: '/login',
-    component: lazy(() => import('../../views/pages/authentication/Login')),
-    layout: 'BlankLayout',
+    component: lazy(() => import('../../views/SecondPage')),
     meta: {
-      authRoute: true
+      publicRoute: true
     }
   },
-  {
-    path: '/pages/register-cover',
-    component: lazy(() => import('../../views/pages/authentication/RegisterCover')),
-    layout: 'BlankLayout'
-  },
+  ...AuthRoutes,
   {
     path: '/error',
     component: lazy(() => import('../../views/Error')),

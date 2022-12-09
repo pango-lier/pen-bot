@@ -1,59 +1,28 @@
+// ** React Imports
+import { Link } from 'react-router-dom'
+
+// ** Custom Hooks
 import { useSkin } from '@hooks/useSkin'
-import { Link, useHistory } from 'react-router-dom'
-import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
-import InputPasswordToggle from '@components/input-password-toggle'
-import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'reactstrap'
+
+// ** Icons Imports
+import { ChevronLeft } from 'react-feather'
+
+// ** Custom Components
+import InputPassword from '@components/input-password-toggle'
+
+// ** Reactstrap Imports
+import { Row, Col, CardTitle, CardText, Form, Label, Button } from 'reactstrap'
+
+// ** Styles
 import '@styles/react/pages/page-authentication.scss'
-import { useState } from 'react'
-import { useMutation } from '@apollo/client'
-import { LOGIN } from 'api/grapth/Auth'
-import { useDispatch } from 'react-redux'
-import { notify } from 'utility/notify'
-import { getHomeRouteForLoggedInUser } from 'utility/Utils'
-import { handleLogin } from 'redux/authentication'
 
-const LoginCover = () => {
-  const history = useHistory();
-  const dispatch = useDispatch();
+const ResetPasswordCover = () => {
+  // ** Hooks
   const { skin } = useSkin()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const [onLogin] = useMutation(LOGIN, {
-    onCompleted: (result) => {
-      dispatch(handleLogin(result.login));
-      history.push(getHomeRouteForLoggedInUser('admin'))
-    },
-    onError: (error) => {
-      console.log(error);
-      notify(error.message, 'error')
-    },
-  });
-
-  const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
+  const illustration = skin === 'dark' ? 'reset-password-v2-dark.svg' : 'reset-password-v2.svg',
     source = require(`@src/assets/images/pages/${illustration}`).default
 
-  const onChangeEmail = (e) => {
-    if (e && e?.target) {
-      setEmail(e.target.value);
-    }
-  }
-  const onChangePassword = (e) => {
-    if (e && e?.target) {
-      setPassword(e.target.value);
-    }
-  }
-
-
-  const login = async () => {
-    console.log(email, password);
-    await onLogin({
-      variables: {
-        email: email,
-        password: password,
-      },
-    });
-  }
   return (
     <div className='auth-wrapper auth-cover'>
       <Row className='auth-inner m-0'>
@@ -116,60 +85,32 @@ const LoginCover = () => {
         <Col className='d-flex align-items-center auth-bg px-2 p-lg-5' lg='4' sm='12'>
           <Col className='px-xl-2 mx-auto' sm='8' md='6' lg='12'>
             <CardTitle tag='h2' className='fw-bold mb-1'>
-              Welcome to Vuexy! 👋
+              Reset Password 🔒
             </CardTitle>
-            <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText>
-            <Form className='auth-login-form mt-2' onSubmit={e => e.preventDefault()}>
+            <CardText className='mb-2'>Your new password must be different from previously used passwords</CardText>
+            <Form className='auth-reset-password-form mt-2' onSubmit={e => e.preventDefault()}>
               <div className='mb-1'>
-                <Label className='form-label' for='login-email'>
-                  Email
+                <Label className='form-label' for='new-password'>
+                  New Password
                 </Label>
-                <Input value={email} onChange={(e) => onChangeEmail(e)} type='email' id='login-email' placeholder='john@example.com' autoFocus />
+                <InputPassword className='input-group-merge' id='new-password' autoFocus />
               </div>
               <div className='mb-1'>
-                <div className='d-flex justify-content-between'>
-                  <Label className='form-label' for='login-password'>
-                    Password
-                  </Label>
-                  <Link to='/pages/forgot-password-cover'>
-                    <small>Forgot Password?</small>
-                  </Link>
-                </div>
-                <InputPasswordToggle value={password} onChange={(e) => onChangePassword(e)} className='input-group-merge' id='login-password' />
-              </div>
-              <div className='form-check mb-1'>
-                <Input type='checkbox' id='remember-me' />
-                <Label className='form-check-label' for='remember-me'>
-                  Remember Me
+                <Label className='form-label' for='confirm-password'>
+                  Confirm Password
                 </Label>
+                <InputPassword className='input-group-merge' id='confirm-password' />
               </div>
-              <Button color='primary' onClick={() => login()}>
-                Sign in
+              <Button color='primary' block>
+                Set New Password
               </Button>
             </Form>
             <p className='text-center mt-2'>
-              <span className='me-25'>New on our platform?</span>
-              <Link to='/pages/register-cover'>
-                <span>Create an account</span>
+              <Link to='/pages/login-cover'>
+                <ChevronLeft className='rotate-rtl me-25' size={14} />
+                <span className='align-middle'>Back to login</span>
               </Link>
             </p>
-            <div className='divider my-2'>
-              <div className='divider-text'>or</div>
-            </div>
-            <div className='auth-footer-btn d-flex justify-content-center'>
-              <Button color='facebook'>
-                <Facebook size={14} />
-              </Button>
-              <Button color='twitter'>
-                <Twitter size={14} />
-              </Button>
-              <Button color='google'>
-                <Mail size={14} />
-              </Button>
-              <Button className='me-0' color='github'>
-                <GitHub size={14} />
-              </Button>
-            </div>
           </Col>
         </Col>
       </Row>
@@ -177,4 +118,4 @@ const LoginCover = () => {
   )
 }
 
-export default LoginCover
+export default ResetPasswordCover

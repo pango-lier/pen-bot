@@ -1,59 +1,16 @@
 import { useSkin } from '@hooks/useSkin'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'reactstrap'
 import '@styles/react/pages/page-authentication.scss'
-import { useState } from 'react'
-import { useMutation } from '@apollo/client'
-import { LOGIN } from 'api/grapth/Auth'
-import { useDispatch } from 'react-redux'
-import { notify } from 'utility/notify'
-import { getHomeRouteForLoggedInUser } from 'utility/Utils'
-import { handleLogin } from 'redux/authentication'
 
 const LoginCover = () => {
-  const history = useHistory();
-  const dispatch = useDispatch();
   const { skin } = useSkin()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
-  const [onLogin] = useMutation(LOGIN, {
-    onCompleted: (result) => {
-      dispatch(handleLogin(result.login));
-      history.push(getHomeRouteForLoggedInUser('admin'))
-    },
-    onError: (error) => {
-      console.log(error);
-      notify(error.message, 'error')
-    },
-  });
 
   const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
     source = require(`@src/assets/images/pages/${illustration}`).default
 
-  const onChangeEmail = (e) => {
-    if (e && e?.target) {
-      setEmail(e.target.value);
-    }
-  }
-  const onChangePassword = (e) => {
-    if (e && e?.target) {
-      setPassword(e.target.value);
-    }
-  }
-
-
-  const login = async () => {
-    console.log(email, password);
-    await onLogin({
-      variables: {
-        email: email,
-        password: password,
-      },
-    });
-  }
   return (
     <div className='auth-wrapper auth-cover'>
       <Row className='auth-inner m-0'>
@@ -124,7 +81,7 @@ const LoginCover = () => {
                 <Label className='form-label' for='login-email'>
                   Email
                 </Label>
-                <Input value={email} onChange={(e) => onChangeEmail(e)} type='email' id='login-email' placeholder='john@example.com' autoFocus />
+                <Input type='email' id='login-email' placeholder='john@example.com' autoFocus />
               </div>
               <div className='mb-1'>
                 <div className='d-flex justify-content-between'>
@@ -135,7 +92,7 @@ const LoginCover = () => {
                     <small>Forgot Password?</small>
                   </Link>
                 </div>
-                <InputPasswordToggle value={password} onChange={(e) => onChangePassword(e)} className='input-group-merge' id='login-password' />
+                <InputPasswordToggle className='input-group-merge' id='login-password' />
               </div>
               <div className='form-check mb-1'>
                 <Input type='checkbox' id='remember-me' />
@@ -143,7 +100,7 @@ const LoginCover = () => {
                   Remember Me
                 </Label>
               </div>
-              <Button color='primary' onClick={() => login()}>
+              <Button color='primary' block>
                 Sign in
               </Button>
             </Form>
