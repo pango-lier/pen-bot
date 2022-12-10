@@ -23,15 +23,26 @@ const BaseTable = ({ user, group }: IUserGroupProps) => {
   const onCreateHandle = () => {
     setAction(ACTION_ENUM.Create);
     setRow(undefined);
+    setIsOpenModalGroup(true);
   };
 
   const onEditHandle = (row) => {
     setRow(row);
     setAction(ACTION_ENUM.Edit);
+    setIsOpenModalGroup(true);
   };
   const onDeleteHandle = (row) => {
     setRow(row);
     setAction(ACTION_ENUM.Delete);
+    setIsOpenModalGroup(true);
+  };
+  const onHandleModal = (row) => {
+    if (action === ACTION_ENUM.Create) {
+      const _data = [...data];
+      _data.unshift(row);
+      setData(_data);
+    }
+    setIsOpenModalGroup(false);
   };
 
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
@@ -135,10 +146,12 @@ const BaseTable = ({ user, group }: IUserGroupProps) => {
       </div>
       {isOpenModalGroup && (
         <ModalAccount
+          action={action}
           account={row}
           group={group}
           isOpenModalGroup={isOpenModalGroup}
           setIsOpenModalGroup={(value) => setIsOpenModalGroup(value)}
+          onHandleModal={onHandleModal}
         />
       )}
     </>

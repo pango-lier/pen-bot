@@ -1,4 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { GroupEnum } from "api/grapth/account/createAccount";
 import {
   ChevronsDown,
   ChevronsRight,
@@ -11,12 +12,7 @@ import { UserI } from "../../columns";
 import Action from "./Action";
 import CheckboxTable from "./CheckboxTable";
 
-export enum GroupEnum {
-  NONE = "none",
-  GOLOGIN = "Gologin",
-}
-
-export interface SubUserGroupI {
+export interface IGroup {
   checkbox?: any;
   expanded?: any;
   id: string | number;
@@ -31,10 +27,10 @@ export interface SubUserGroupI {
 
 export interface IUserGroupProps {
   user: UserI;
-  group: SubUserGroupI;
+  group: IGroup;
 }
 
-const columnHelper = createColumnHelper<SubUserGroupI>();
+const columnHelper = createColumnHelper<IGroup>();
 
 export const COLUMNS = (
   onCreateHandle: Function,

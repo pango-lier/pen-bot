@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import { COLUMNS, SubUserGroupI } from "./columns";
+import { COLUMNS, IGroup } from "./columns";
 import {
   ExpandedState,
   flexRender,
@@ -19,8 +19,8 @@ import { ACTION_ENUM } from "utility/enum/actions";
 const BaseTable = ({ user }: { user: UserI }) => {
   const [isOpenModalGroup, setIsOpenModalGroup] = useState<boolean>(false);
   const [action, setAction] = useState<ACTION_ENUM>(ACTION_ENUM.None);
-  const [row, setRow] = useState<SubUserGroupI | undefined>();
-  const [data, setData] = useState<SubUserGroupI[]>([]);
+  const [row, setRow] = useState<IGroup | undefined>();
+  const [data, setData] = useState<IGroup[]>([]);
   const onCreateHandle = () => {
     setAction(ACTION_ENUM.Create);
     setRow(undefined);
@@ -46,9 +46,6 @@ const BaseTable = ({ user }: { user: UserI }) => {
     setIsOpenModalGroup(false);
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(25);

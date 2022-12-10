@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { CREATE_NEW_GROUP, GroupEnum } from "api/grapth/group/createNewGroup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import {
   Button,
@@ -19,11 +19,11 @@ import {
 } from "utility/helper/enum";
 import { notifyError, notifySuccess } from "utility/notify";
 import { UserI } from "../../../columns";
-import { SubUserGroupI } from "../columns";
+import { IGroup } from "../columns";
 
 interface IModalGroupProps {
-  user: UserI | undefined;
-  row: SubUserGroupI | undefined;
+  user: UserI;
+  row: IGroup | undefined;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
   action: ACTION_ENUM;
@@ -37,10 +37,18 @@ const ModalGroup = ({
   action,
   onHandle,
 }: IModalGroupProps) => {
-  const [name, setName] = useState<String>("");
-  const [secretKey, setSecretKey] = useState<String>("");
-  const [secretName, setSecretName] = useState<String>("");
+  const [name, setName] = useState<string>();
+  const [secretKey, setSecretKey] = useState<string | undefined>();
+  const [secretName, setSecretName] = useState<string | undefined>();
   const [groupType, setGroupType] = useState<GroupEnum>(GroupEnum.NONE);
+  useEffect(() => {
+    if (row) {
+      setName(row.name);
+      setSecretKey(row.secretKey);
+      setSecretName(row.secretName);
+      setGroupType(row.groupType);
+    }
+  }, [row]);
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
@@ -77,18 +85,24 @@ const ModalGroup = ({
     e: React.FormEvent<HTMLButtonElement>
   ) => {
     try {
-      if (user) {
-        const group = await createOneGroupDto({
-          variables: {
-            name,
-            secretKey,
-            secretName,
-            groupType,
-            userId: user.id,
-          },
-        });
-        setIsOpenModalGroup(!isOpenModalGroup);
-        onHandle(group.data.createOneGroupDto);
+      switch (action) {
+        case ACTION_ENUM.Create:
+          const group = await createOneGroupDto({
+            variables: {
+              name,
+              secretKey,
+              secretName,
+              groupType,
+              userId: user.id,
+            },
+          });
+          setIsOpenModalGroup(!isOpenModalGroup);
+          onHandle(group.data.createOneGroupDto);
+
+          break;
+
+        default:
+          break;
       }
     } catch (error) {
       notifyError(error);
@@ -110,6 +124,7 @@ const ModalGroup = ({
                 Name
               </Label>
               <Input
+                value={name}
                 type="text"
                 id="register-name"
                 placeholder="johndoe"
@@ -132,6 +147,7 @@ const ModalGroup = ({
                 Secret Key
               </Label>
               <Input
+                value={secretKey}
                 type="text"
                 id="register-secret-key"
                 placeholder="secret key ..."
@@ -143,6 +159,7 @@ const ModalGroup = ({
                 Secret Name
               </Label>
               <Input
+                value={secretName}
                 type="text"
                 id="register-secret-key"
                 placeholder="secret key ..."

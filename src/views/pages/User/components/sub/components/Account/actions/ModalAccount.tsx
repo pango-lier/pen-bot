@@ -12,21 +12,26 @@ import {
   ModalFooter,
   ModalHeader,
 } from "reactstrap";
+import { ACTION_ENUM } from "utility/enum/actions";
 import { notifyError, notifySuccess } from "utility/notify";
-import { SubUserGroupI } from "../../columns";
+import { IGroup } from "../../columns";
 import { IAccount } from "../components/columns";
 
 interface IModalIAccountProps {
   account: IAccount | undefined;
-  group: SubUserGroupI;
+  group: IGroup;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
+  onHandleModal: Function;
+  action: ACTION_ENUM;
 }
 const ModalAccount = ({
   isOpenModalGroup,
   setIsOpenModalGroup,
   group,
   account,
+  onHandleModal,
+  action,
 }: IModalIAccountProps) => {
   const [name, setName] = useState<String>("");
   const [active, setActive] = useState<number>(1);
@@ -64,19 +69,27 @@ const ModalAccount = ({
     },
   });
 
-  const create: React.FormEventHandler<HTMLButtonElement> = async (
+  const onAccept: React.FormEventHandler<HTMLButtonElement> = async (
     e: React.FormEvent<HTMLButtonElement>
   ) => {
-    await createOneAccountDto({
-      variables: {
-        name,
-        active: active === 1,
-        proxyId,
-        proxyType,
-        groupId: group.id,
-      },
-    });
-    setIsOpenModalGroup(!isOpenModalGroup);
+    switch (action) {
+      case ACTION_ENUM.Create:
+        await createOneAccountDto({
+          variables: {
+            name,
+            active: active === 1,
+            proxyId,
+            proxyType,
+            groupId: group.id,
+          },
+        });
+        setIsOpenModalGroup(!isOpenModalGroup);
+        onHandleModal();
+        break;
+
+      default:
+        break;
+    }
   };
   return (
     <div>
@@ -141,7 +154,7 @@ const ModalAccount = ({
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={(e) => create(e)}>
+          <Button color="primary" onClick={(e) => onAccept(e)}>
             Accept
           </Button>
         </ModalFooter>

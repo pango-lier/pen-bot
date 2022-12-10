@@ -5,11 +5,6 @@ import { Tooltip } from "views/pages/components/Tooltip";
 import Action from "./Action";
 import CheckboxTable from "./CheckboxTable";
 
-export enum GroupEnum {
-  NONE = "none",
-  GOLOGIN = "Gologin",
-}
-
 export interface IAccount {
   checkbox?: any;
   expanded?: any;
