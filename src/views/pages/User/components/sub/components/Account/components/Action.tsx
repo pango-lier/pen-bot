@@ -8,7 +8,6 @@ import {
 } from "reactstrap";
 
 const Action = (row: any) => {
-  console.log(row);
   return (
     <>
       <div className="d-flex justify-content-around align-content-between flex-nowrap">

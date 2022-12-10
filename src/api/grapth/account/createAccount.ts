@@ -27,6 +27,7 @@ export const CREATE_ACCOUNT = gql`
       id
       name
       active
+      name
       proxyId
       proxyType
       createdAt

@@ -45,7 +45,6 @@ const LoginCover = () => {
 
 
   const login = async () => {
-    console.log(email, password);
     await onLogin({
       variables: {
         email: email,

@@ -26,12 +26,11 @@ export const CREATE_NEW_GROUP = gql`
     ) {
       id
       name
-      secretKey
       secretName
+      secretKey
       groupType
-      createdAt
-      updatedAt
       userId
+      createdAt
     }
   }
 `;

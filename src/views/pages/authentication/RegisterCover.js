@@ -47,7 +47,6 @@ const RegisterCover = () => {
 
   const [onCreateUser] = useMutation(CREATE_USER, {
     onCompleted: (result) => {
-      console.log(result);
       history.push('/login');
       notifySuccess("Sig up is success.");
     },
@@ -56,14 +55,20 @@ const RegisterCover = () => {
     },
   });
   const onSubmit = (e) => {
-    e.preventDefault();
-    onCreateUser({
-      variables: {
-        email: email,
-        password: password,
-        name: name
-      },
-    });
+    try {
+
+
+      e.preventDefault();
+      onCreateUser({
+        variables: {
+          email: email,
+          password: password,
+          name: name
+        },
+      });
+    } catch (error) {
+      notifyError(error)
+    }
   }
 
   const illustration = skin === 'dark' ? 'register-v2-dark.svg' : 'register-v2.svg',
