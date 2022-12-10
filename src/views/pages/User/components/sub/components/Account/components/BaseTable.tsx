@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { COLUMNS, SubUserGroupI } from "./columns";
+import { COLUMNS, IAccount } from "./columns";
 import {
   ExpandedState,
   flexRender,
@@ -7,15 +7,33 @@ import {
   getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Card, CardBody, Table } from "reactstrap";
 import { useLazyQuery } from "@apollo/client";
-import { GET_USER_GROUP } from "api/grapth/group/getUserGroups";
 import { notifyError } from "utility/notify";
 import { IUserGroupProps } from "../../columns";
 import { GET_ACCOUNTS } from "api/grapth/account/getAccounts";
+import ModalAccount from "../actions/ModalAccount";
+import { Table } from "reactstrap";
+import { ACTION_ENUM } from "utility/enum/actions";
 
 const BaseTable = ({ user, group }: IUserGroupProps) => {
-  const [data, setData] = useState<SubUserGroupI[]>([]);
+  const [isOpenModalGroup, setIsOpenModalGroup] = useState<boolean>(false);
+  const [action, setAction] = useState<ACTION_ENUM>(ACTION_ENUM.None);
+  const [row, setRow] = useState<IAccount | undefined>();
+  const [data, setData] = useState<IAccount[]>([]);
+  const onCreateHandle = () => {
+    setAction(ACTION_ENUM.Create);
+    setRow(undefined);
+  };
+
+  const onEditHandle = (row) => {
+    setRow(row);
+    setAction(ACTION_ENUM.Edit);
+  };
+  const onDeleteHandle = (row) => {
+    setRow(row);
+    setAction(ACTION_ENUM.Delete);
+  };
+
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(25);
@@ -51,7 +69,10 @@ const BaseTable = ({ user, group }: IUserGroupProps) => {
   }, []);
   const table = useReactTable({
     data: useMemo(() => data, [data]),
-    columns: useMemo(() => COLUMNS, []),
+    columns: useMemo(
+      () => COLUMNS(onCreateHandle, onEditHandle, onDeleteHandle),
+      []
+    ),
     state: {
       expanded,
     },
@@ -112,6 +133,14 @@ const BaseTable = ({ user, group }: IUserGroupProps) => {
           </tbody>
         </Table>
       </div>
+      {isOpenModalGroup && (
+        <ModalAccount
+          account={row}
+          group={group}
+          isOpenModalGroup={isOpenModalGroup}
+          setIsOpenModalGroup={(value) => setIsOpenModalGroup(value)}
+        />
+      )}
     </>
   );
 };

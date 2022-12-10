@@ -1,6 +1,5 @@
 import { useMutation } from "@apollo/client";
 import { CREATE_ACCOUNT } from "api/grapth/account/createAccount";
-import { CREATE_NEW_GROUP, GroupEnum } from "api/grapth/group/createNewGroup";
 import React, { useState } from "react";
 import ReactSelect from "react-select";
 import {
@@ -14,18 +13,21 @@ import {
   ModalHeader,
 } from "reactstrap";
 import { notifyError, notifySuccess } from "utility/notify";
-import { SubUserGroupI } from "../columns";
+import { SubUserGroupI } from "../../columns";
+import { IAccount } from "../components/columns";
 
-interface IModalGroupProps {
+interface IModalIAccountProps {
+  account: IAccount | undefined;
   group: SubUserGroupI;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
 }
-const ModalGroup = ({
+const ModalAccount = ({
   isOpenModalGroup,
   setIsOpenModalGroup,
   group,
-}: IModalGroupProps) => {
+  account,
+}: IModalIAccountProps) => {
   const [name, setName] = useState<String>("");
   const [active, setActive] = useState<number>(1);
   const [proxyId, setProxyId] = useState<String>("");
@@ -150,4 +152,4 @@ const ModalGroup = ({
 
 //ModalGroup.propTypes = {};
 
-export default ModalGroup;
+export default ModalAccount;

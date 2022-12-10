@@ -20,14 +20,14 @@ import { notifyError, notifySuccess } from "utility/notify";
 import { UserI } from "../columns";
 
 interface IModalGroupProps {
-  user: UserI;
+  row: UserI | undefined;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
 }
 const ModalGroup = ({
   isOpenModalGroup,
   setIsOpenModalGroup,
-  user,
+  row,
 }: IModalGroupProps) => {
   const [name, setName] = useState<String>("");
   const [secretKey, setSecretKey] = useState<String>("");
@@ -68,16 +68,22 @@ const ModalGroup = ({
   const create: React.FormEventHandler<HTMLButtonElement> = async (
     e: React.FormEvent<HTMLButtonElement>
   ) => {
-    await createOneGroupDto({
-      variables: {
-        name,
-        secretKey,
-        secretName,
-        groupType,
-        userId: user.id,
-      },
-    });
-    setIsOpenModalGroup(!isOpenModalGroup);
+    try {
+      if (row) {
+        const group = await createOneGroupDto({
+          variables: {
+            name,
+            secretKey,
+            secretName,
+            groupType,
+            userId: row.id,
+          },
+        });
+      }
+      setIsOpenModalGroup(!isOpenModalGroup);
+    } catch (error) {
+      notifyError(error);
+    }
   };
   return (
     <div>

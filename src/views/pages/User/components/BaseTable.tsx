@@ -11,7 +11,20 @@ import { Table } from "reactstrap";
 import { useLazyQuery } from "@apollo/client";
 import { GET_USERS } from "api/grapth/user/getUsers";
 import Group from "./sub";
+import ModalGroup from "./actions/ModalUser";
 const BaseTable = () => {
+  const [isOpenModalGroup, setIsOpenModalGroup] = useState<boolean>(false);
+  const onCreateHandle = (group) => {
+    console.log(group);
+  };
+
+  const onEditHandle = (group) => {
+    console.log(group);
+  };
+  const onDeleteHandle = (group) => {
+    console.log(group);
+  };
+  const [row, setRow] = useState<UserI | undefined>();
   const [data, setData] = useState<UserI[]>([]);
   const [expanded, setExpanded] = React.useState<ExpandedState>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -32,9 +45,13 @@ const BaseTable = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
   const table = useReactTable({
     data: useMemo(() => data, [data]),
-    columns: useMemo(() => COLUMNS, []),
+    columns: useMemo(
+      () => COLUMNS(onCreateHandle, onEditHandle, onDeleteHandle),
+      []
+    ),
     state: {
       expanded,
     },
@@ -129,6 +146,13 @@ const BaseTable = () => {
           Rerender
         </button>
       </div>
+      {isOpenModalGroup && (
+        <ModalGroup
+          row={row}
+          isOpenModalGroup={isOpenModalGroup}
+          setIsOpenModalGroup={(value) => setIsOpenModalGroup(value)}
+        />
+      )}
     </>
   );
 };

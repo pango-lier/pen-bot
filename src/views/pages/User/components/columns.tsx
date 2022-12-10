@@ -6,6 +6,7 @@ import {
   ChevronsRight,
   ChevronsUp,
   ChevronUp,
+  PlusCircle,
 } from "react-feather";
 import { Button } from "reactstrap";
 import Action from "./Action";
@@ -31,7 +32,11 @@ export interface IUserProps {
 
 const columnHelper = createColumnHelper<UserI>();
 
-export const COLUMNS = [
+export const COLUMNS = (
+  onCreateHandle: Function,
+  onEditHandle: Function,
+  onDeleteHandle: Function
+) => [
   columnHelper.accessor((row) => row.checkbox, {
     id: "checkbox",
     header: ({ table }) => (
@@ -135,13 +140,27 @@ export const COLUMNS = [
     minSize: 50,
     maxSize: 50,
   }),
-  {
-    header: "Actions",
+  columnHelper.accessor("actions", {
+    header: ({ table }) => (
+      <>
+        <PlusCircle
+          className="cursor-pointer"
+          onClick={() => onCreateHandle()}
+          size="30px"
+        />
+      </>
+    ),
     cell: (info) => {
-      return <Action user={info.row.original} />;
+      return (
+        <Action
+          row={info.row.original}
+          onEditHandle={onEditHandle}
+          onDeleteHandle={onDeleteHandle}
+        />
+      );
     },
     size: 30,
     minSize: 30,
     maxSize: 40,
-  },
+  }),
 ];
