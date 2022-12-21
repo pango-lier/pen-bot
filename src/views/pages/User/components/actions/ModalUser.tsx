@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { CREATE_NEW_GROUP, GroupEnum } from "api/grapth/group/createNewGroup";
+import { CREATE_USER } from "api/grapth/user/registerUser";
 import React, { useState } from "react";
 import ReactSelect from "react-select";
 import {
@@ -18,16 +18,22 @@ import {
 } from "utility/helper/enum";
 import { notifyError, notifySuccess } from "utility/notify";
 import { UserI } from "../columns";
+import { GroupEnum } from "api/grapth/group/group.enum";
+import { ACTION_ENUM } from "utility/enum/actions";
 
 interface IModalGroupProps {
   row: UserI | undefined;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
+  onHandle: Function;
+  action: ACTION_ENUM;
 }
-const ModalGroup = ({
+const ModalUser = ({
   isOpenModalGroup,
   setIsOpenModalGroup,
   row,
+  onHandle,
+  action,
 }: IModalGroupProps) => {
   const [name, setName] = useState<String>("");
   const [secretKey, setSecretKey] = useState<String>("");
@@ -56,7 +62,7 @@ const ModalGroup = ({
     }
   };
 
-  const [createOneGroupDto] = useMutation(CREATE_NEW_GROUP, {
+  const [createOneGroupDto] = useMutation(CREATE_USER, {
     onCompleted: (result) => {
       notifySuccess("Sig up is success.");
     },
@@ -70,7 +76,7 @@ const ModalGroup = ({
   ) => {
     try {
       if (row) {
-        const group = await createOneGroupDto({
+        const data = await createOneGroupDto({
           variables: {
             name,
             secretKey,
@@ -81,6 +87,7 @@ const ModalGroup = ({
         });
       }
       setIsOpenModalGroup(!isOpenModalGroup);
+      onHandle();
     } catch (error) {
       notifyError(error);
     }
@@ -154,4 +161,4 @@ const ModalGroup = ({
 
 //ModalGroup.propTypes = {};
 
-export default ModalGroup;
+export default ModalUser;

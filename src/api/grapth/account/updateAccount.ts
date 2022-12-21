@@ -1,16 +1,18 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_ACCOUNT = gql`
-  mutation createOneAccountDto(
+export const UPDATE_ACCOUNT = gql`
+  mutation updateOneAccountDto(
+    $id: ID!
     $name: String!
     $active: Boolean
     $proxyId: String
     $proxyType: String
     $groupId: ID
   ) {
-    createOneAccountDto(
+    updateOneAccountDto(
       input: {
-        accountDto: {
+        id: $id
+        UpdateAccountDto: {
           name: $name
           active: $active
           proxyId: $proxyId

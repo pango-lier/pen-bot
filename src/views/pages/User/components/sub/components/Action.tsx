@@ -1,4 +1,4 @@
-import { Edit, MoreVertical, Trash } from "react-feather";
+import { Edit, Edit2, MoreVertical, Trash, Trash2 } from "react-feather";
 import {
   DropdownItem,
   DropdownMenu,
@@ -12,17 +12,17 @@ const Action = ({ row, onEditHandle, onDeleteHandle }: any) => {
     <>
       <div className="d-flex justify-content-around align-content-between flex-nowrap">
         <ButtonTooltip
-          color="success"
+          color="primary"
           id={"create-account" + row.id}
           message={"Create new account"}
           onHandle={() => onEditHandle(row)}
-          icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
+          icon={<Edit2 size={12} />}
         />
         <ButtonTooltip
           id={"create-account" + row.id}
           message={"Create new account"}
           onHandle={() => onDeleteHandle(row)}
-          icon={<i className="fa-solid fa-pen" style={{ fontSize: 12 }} />}
+          icon={<Trash2 size={12}  />}
           color="danger"
         />
         <UncontrolledDropdown>

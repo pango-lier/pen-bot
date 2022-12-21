@@ -1,16 +1,19 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_NEW_GROUP = gql`
-  mutation createOneGroupDto(
+export const UPDATE_NEW_GROUP = gql`
+  mutation updateOneGroupDto(
+    $id: ID!
     $name: String!
     $secretKey: String
     $secretName: String
     $groupType: GroupEnum
     $userId: ID
   ) {
-    createOneGroupDto(
+    updateOneGroupDto(
       input: {
-        groupDto: {
+        id: $id
+        update: {
+          # id: $id
           name: $name
           secretKey: $secretKey
           secretName: $secretName

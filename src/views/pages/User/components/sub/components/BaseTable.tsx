@@ -42,6 +42,18 @@ const BaseTable = ({ user }: { user: UserI }) => {
       const _data = [...data];
       _data.unshift(row);
       setData(_data);
+    } else if (action === ACTION_ENUM.Update) {
+      const _data = data.map((i) => {
+        if (i.id === row.id) i = row;
+        return i;
+      });
+      setData(_data);
+    } else if (action === ACTION_ENUM.Delete) {
+      const _data = [...data];
+      data.forEach((i, index) => {
+        if (i.id === row.id) delete _data[index];
+      });
+      setData(_data);
     }
     setIsOpenModalGroup(false);
   };

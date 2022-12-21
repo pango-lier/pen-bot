@@ -7,7 +7,7 @@ interface Props {
 }
 const Group = ({ user }: Props) => {
   return (
-    <div>
+    <div className="mt-2 mb-2">
       <BaseTable user={user} />
     </div>
   );

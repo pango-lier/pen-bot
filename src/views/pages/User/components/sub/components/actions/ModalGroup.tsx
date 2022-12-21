@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { CREATE_NEW_GROUP, GroupEnum } from "api/grapth/group/createNewGroup";
+import { CREATE_NEW_GROUP } from "api/grapth/group/createNewGroup";
 import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import {
@@ -20,6 +20,9 @@ import {
 import { notifyError, notifySuccess } from "utility/notify";
 import { UserI } from "../../../columns";
 import { IGroup } from "../columns";
+import { GroupEnum } from "api/grapth/group/group.enum";
+import { UPDATE_NEW_GROUP } from "api/grapth/group/updateGroup";
+import { DELETE_GROUP } from "api/grapth/group/deleteGroup";
 
 interface IModalGroupProps {
   user: UserI;
@@ -41,6 +44,7 @@ const ModalGroup = ({
   const [secretKey, setSecretKey] = useState<string | undefined>();
   const [secretName, setSecretName] = useState<string | undefined>();
   const [groupType, setGroupType] = useState<GroupEnum>(GroupEnum.NONE);
+  const [styleAction, setStyleAction] = useState<React.CSSProperties | undefined>();
   useEffect(() => {
     if (row) {
       setName(row.name);
@@ -49,6 +53,10 @@ const ModalGroup = ({
       setGroupType(row.groupType);
     }
   }, [row]);
+  useEffect(() => {
+    if (action === ACTION_ENUM.Delete)
+      setStyleAction({ pointerEvents: "none", opacity: "0.7" });
+  }, [action]);
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
@@ -81,6 +89,24 @@ const ModalGroup = ({
     },
   });
 
+  const [updateOneGroupDto] = useMutation(UPDATE_NEW_GROUP, {
+    onCompleted: (result) => {
+      notifySuccess("Sig up is success.");
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const [deleteGroup] = useMutation(DELETE_GROUP, {
+    onCompleted: (result) => {
+      notifySuccess("Sig up is success.");
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
   const create: React.FormEventHandler<HTMLButtonElement> = async (
     e: React.FormEvent<HTMLButtonElement>
   ) => {
@@ -100,7 +126,31 @@ const ModalGroup = ({
           onHandle(group.data.createOneGroupDto);
 
           break;
+        case ACTION_ENUM.Edit:
+          const update = await updateOneGroupDto({
+            variables: {
+              id: row?.id,
+              name,
+              secretKey,
+              secretName,
+              groupType,
+              userId: user.id,
+            },
+          });
+          setIsOpenModalGroup(!isOpenModalGroup);
+          onHandle(update.data.updateOneGroupDto);
 
+          break;
+        case ACTION_ENUM.Delete:
+          const destroy = await deleteGroup({
+            variables: {
+              id: row?.id,
+            },
+          });
+          setIsOpenModalGroup(!isOpenModalGroup);
+          onHandle(destroy.data.AccountDtoDeleteResponse);
+
+          break;
         default:
           break;
       }
@@ -108,6 +158,7 @@ const ModalGroup = ({
       notifyError(error);
     }
   };
+
   return (
     <div>
       <Modal
@@ -118,7 +169,7 @@ const ModalGroup = ({
           Basic Modal
         </ModalHeader>
         <ModalBody>
-          <Form className="auth-register-form mt-2">
+          <Form className="auth-register-form mt-2" style={styleAction}>
             <div className="mb-1">
               <Label className="form-label" for="register-name">
                 Name

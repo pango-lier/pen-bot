@@ -1,6 +1,8 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { GroupEnum } from "api/grapth/account/createAccount";
+
 import {
+  ChevronDown,
+  ChevronRight,
   ChevronsDown,
   ChevronsRight,
   ChevronsUp,
@@ -11,6 +13,7 @@ import { Tooltip } from "views/pages/components/Tooltip";
 import { UserI } from "../../columns";
 import Action from "./Action";
 import CheckboxTable from "./CheckboxTable";
+import { GroupEnum } from "api/grapth/group/group.enum";
 
 export interface IGroup {
   checkbox?: any;
@@ -53,15 +56,9 @@ export const COLUMNS = (
       ),
       cell: ({ row, getValue }) => (
         <div
-          style={
-            {
-              // Since rows are flattened by default,
-              // we can use the row.depth property
-              // and paddingLeft to visually indicate the depth
-              // of the row
-              // paddingLeft: `${row.depth * 2}rem`,
-            }
-          }
+          style={{
+            paddingLeft: `${row.depth * 2}rem`,
+          }}
         >
           <>
             <CheckboxTable
@@ -79,7 +76,7 @@ export const COLUMNS = (
                   onClick: row.getToggleExpandedHandler(),
                 }}
               >
-                {row.getIsExpanded() ? <ChevronsDown /> : <ChevronsRight />}
+                {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
               </span>
             ) : (
               ""

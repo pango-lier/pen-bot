@@ -44,6 +44,11 @@ $text-dark: #4d7bca;
   overflow-y: scroll;
 }
 
+.paginate-relative {
+  position:fixed;
+  bottom: 20px;
+  right: 10px;
+}
 //   border: none;
 // .custom-rt {
 //   border: none;
