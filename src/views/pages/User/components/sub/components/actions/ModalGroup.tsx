@@ -148,7 +148,7 @@ const ModalGroup = ({
             },
           });
           setIsOpenModalGroup(!isOpenModalGroup);
-          onHandle(destroy.data.AccountDtoDeleteResponse);
+          onHandle(destroy.data.deleteOneGroupDto);
 
           break;
         default:

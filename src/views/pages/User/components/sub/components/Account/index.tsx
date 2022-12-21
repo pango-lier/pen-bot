@@ -5,7 +5,7 @@ import { IUserGroupProps, IGroup } from "../columns";
 
 const Account = ({ user, group }: IUserGroupProps) => {
   return (
-    <div>
+    <div className="mt-2 mb-2">
       <BaseTable user={user} group={group} />
     </div>
   );
