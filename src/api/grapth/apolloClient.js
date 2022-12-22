@@ -31,7 +31,7 @@ const returnTokenDependingOnOperation = (operation) => {
 };
 
 const apolloHttpLink = createHttpLink({
-	uri: process.env.REACT_APP_SERVER_URL,
+	uri: process.env.REACT_APP_SERVER_URL + '/graphql',
 });
 
 const apolloAuthLink = setContext((operation, { headers }) => {
