@@ -41,6 +41,16 @@ const BaseTable = ({ user, group }: IUserGroupProps) => {
       const _data = [...data];
       _data.unshift(row);
       setData(_data);
+    } else if (action === ACTION_ENUM.Edit) {
+      const _data = data.map((i) => {
+        if (i.id === row.id) i = row;
+        return i;
+      });
+      setData(_data);
+    } else if (action === ACTION_ENUM.Delete) {
+      let _data = data.filter((i) => i.id !== row.id);
+      console.log(_data);
+      setData(_data);
     }
     setIsOpenModalGroup(false);
   };
@@ -147,7 +157,7 @@ const BaseTable = ({ user, group }: IUserGroupProps) => {
       {isOpenModalGroup && (
         <ModalAccount
           action={action}
-          account={row}
+          row={row}
           group={group}
           isOpenModalGroup={isOpenModalGroup}
           setIsOpenModalGroup={(value) => setIsOpenModalGroup(value)}

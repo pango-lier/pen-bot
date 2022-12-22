@@ -41,15 +41,17 @@ const ModalGroup = ({
   onHandle,
 }: IModalGroupProps) => {
   const [name, setName] = useState<string>();
-  const [secretKey, setSecretKey] = useState<string | undefined>();
-  const [secretName, setSecretName] = useState<string | undefined>();
+  const [secretKey, setSecretKey] = useState<string>("");
+  const [secretName, setSecretName] = useState<string>("");
   const [groupType, setGroupType] = useState<GroupEnum>(GroupEnum.NONE);
-  const [styleAction, setStyleAction] = useState<React.CSSProperties | undefined>();
+  const [styleAction, setStyleAction] = useState<
+    React.CSSProperties | undefined
+  >();
   useEffect(() => {
     if (row) {
       setName(row.name);
-      setSecretKey(row.secretKey);
-      setSecretName(row.secretName);
+      setSecretKey(row.secretKey ?? "");
+      setSecretName(row.secretName ?? "");
       setGroupType(row.groupType);
     }
   }, [row]);
@@ -59,9 +61,7 @@ const ModalGroup = ({
   }, [action]);
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e && e?.target) {
-      setName(e.target.value);
-    }
+    setName(e.target.value);
   };
   const onChangeSecretKey = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
@@ -82,7 +82,7 @@ const ModalGroup = ({
 
   const [createOneGroupDto] = useMutation(CREATE_NEW_GROUP, {
     onCompleted: (result) => {
-      notifySuccess("Sig up is success.");
+      notifySuccess("Create is success.");
     },
     onError: (error) => {
       notifyError(error);
@@ -91,7 +91,7 @@ const ModalGroup = ({
 
   const [updateOneGroupDto] = useMutation(UPDATE_NEW_GROUP, {
     onCompleted: (result) => {
-      notifySuccess("Sig up is success.");
+      notifySuccess("Update is success.");
     },
     onError: (error) => {
       notifyError(error);
@@ -100,7 +100,7 @@ const ModalGroup = ({
 
   const [deleteGroup] = useMutation(DELETE_GROUP, {
     onCompleted: (result) => {
-      notifySuccess("Sig up is success.");
+      notifySuccess("Delete is success.");
     },
     onError: (error) => {
       notifyError(error);
@@ -166,27 +166,27 @@ const ModalGroup = ({
         toggle={() => setIsOpenModalGroup(!isOpenModalGroup)}
       >
         <ModalHeader toggle={() => setIsOpenModalGroup(!isOpenModalGroup)}>
-          Basic Modal
+          Group Modal
         </ModalHeader>
         <ModalBody>
           <Form className="auth-register-form mt-2" style={styleAction}>
             <div className="mb-1">
-              <Label className="form-label" for="register-name">
+              <Label className="form-label" for="setIsOpenModalGroup-name">
                 Name
               </Label>
               <Input
-                value={name}
+                defaultValue={name}
                 type="text"
-                id="register-name"
+                id="setIsOpenModalGroup-name"
                 placeholder="johndoe"
                 autoFocus
-                onChange={(e) => onChangeName(e)}
+                onChange={onChangeName}
               />
             </div>
             <div className="mb-1">
               <Label className="form-label">Basic</Label>
               <ReactSelect
-                value={enumToFormatSelected(GroupEnum, groupType)}
+                defaultValue={enumToFormatSelected(GroupEnum, groupType)}
                 className="react-select"
                 options={enumToFormatSelectOptions(GroupEnum)}
                 isClearable={false}
@@ -198,7 +198,7 @@ const ModalGroup = ({
                 Secret Key
               </Label>
               <Input
-                value={secretKey}
+                defaultValue={secretKey}
                 type="text"
                 id="register-secret-key"
                 placeholder="secret key ..."
@@ -210,7 +210,7 @@ const ModalGroup = ({
                 Secret Name
               </Label>
               <Input
-                value={secretName}
+                defaultValue={secretName}
                 type="text"
                 id="register-secret-key"
                 placeholder="secret key ..."

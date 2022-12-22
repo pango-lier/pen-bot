@@ -12,7 +12,7 @@ export const UPDATE_ACCOUNT = gql`
     updateOneAccountDto(
       input: {
         id: $id
-        UpdateAccountDto: {
+        update: {
           name: $name
           active: $active
           proxyId: $proxyId

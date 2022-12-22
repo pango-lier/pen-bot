@@ -1,7 +1,6 @@
 import { useMutation } from "@apollo/client";
-import { CREATE_USER } from "api/grapth/user/registerUser";
-import React, { useState } from "react";
-import ReactSelect from "react-select";
+import { CREATE_NEW_GROUP } from "api/grapth/group/createNewGroup";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -12,59 +11,84 @@ import {
   ModalFooter,
   ModalHeader,
 } from "reactstrap";
-import {
-  enumToFormatSelected,
-  enumToFormatSelectOptions,
-} from "utility/helper/enum";
-import { notifyError, notifySuccess } from "utility/notify";
-import { UserI } from "../columns";
-import { GroupEnum } from "api/grapth/group/group.enum";
 import { ACTION_ENUM } from "utility/enum/actions";
+
+import { notifyError, notifySuccess } from "utility/notify";
+
+import { UPDATE_NEW_GROUP } from "api/grapth/group/updateGroup";
+import { DELETE_GROUP } from "api/grapth/group/deleteGroup";
+import { UserI } from "../columns";
+import { CREATE_USER } from "api/grapth/user/registerUser";
+import { UPDATE_USER } from "api/grapth/user/updateUser";
+import { DELETE_USER } from "api/grapth/user/deleteUser";
 
 interface IModalGroupProps {
   row: UserI | undefined;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
-  onHandle: Function;
   action: ACTION_ENUM;
+  onHandle: Function;
 }
 const ModalUser = ({
   isOpenModalGroup,
   setIsOpenModalGroup,
   row,
-  onHandle,
   action,
+  onHandle,
 }: IModalGroupProps) => {
-  const [name, setName] = useState<String>("");
-  const [secretKey, setSecretKey] = useState<String>("");
-  const [secretName, setSecretName] = useState<String>("");
-  const [groupType, setGroupType] = useState<GroupEnum>(GroupEnum.NONE);
+  const [name, setName] = useState<string>();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [styleAction, setStyleAction] = useState<
+    React.CSSProperties | undefined
+  >();
+  useEffect(() => {
+    if (row) {
+      setName(row.name);
+    }
+  }, [row]);
+  useEffect(() => {
+    if (action === ACTION_ENUM.Delete)
+      setStyleAction({ pointerEvents: "none", opacity: "0.7" });
+  }, [action]);
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
       setName(e.target.value);
     }
   };
-  const onChangeSecretKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeEmail = (e) => {
     if (e && e?.target) {
-      setSecretKey(e.target.value);
+      setEmail(e.target.value);
     }
   };
-  const onChangeSecretName = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangePassword = (e) => {
     if (e && e?.target) {
-      setSecretName(e.target.value);
+      setPassword(e.target.value);
     }
   };
-
-  const onChangeGroupType = (e) => {
-    if (e) {
-      setGroupType(e.value);
-    }
-  };
-
-  const [createOneGroupDto] = useMutation(CREATE_USER, {
+  const [createOne] = useMutation(CREATE_USER, {
     onCompleted: (result) => {
-      notifySuccess("Sig up is success.");
+      notifySuccess("Create is success.");
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const [updateOne] = useMutation(UPDATE_USER, {
+    onCompleted: (result) => {
+      notifySuccess("Update is success.");
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const [deleteOne] = useMutation(DELETE_USER, {
+    onCompleted: (result) => {
+      notifySuccess("Delete is success.");
     },
     onError: (error) => {
       notifyError(error);
@@ -75,23 +99,50 @@ const ModalUser = ({
     e: React.FormEvent<HTMLButtonElement>
   ) => {
     try {
-      if (row) {
-        const data = await createOneGroupDto({
-          variables: {
-            name,
-            secretKey,
-            secretName,
-            groupType,
-            userId: row.id,
-          },
-        });
+      switch (action) {
+        case ACTION_ENUM.Create:
+          const group = await createOne({
+            variables: {
+              name,
+              email: email,
+              password: password,
+            },
+          });
+          setIsOpenModalGroup(!isOpenModalGroup);
+          onHandle(group.data.createOneUserDto);
+
+          break;
+        case ACTION_ENUM.Edit:
+          const update = await updateOne({
+            variables: {
+              id: row?.id,
+              name,
+              email: email,
+              password: password,
+            },
+          });
+          setIsOpenModalGroup(!isOpenModalGroup);
+          onHandle(update.data.updateOneUserDto);
+
+          break;
+        case ACTION_ENUM.Delete:
+          const destroy = await deleteOne({
+            variables: {
+              id: row?.id,
+            },
+          });
+          setIsOpenModalGroup(!isOpenModalGroup);
+          onHandle(destroy.data.deleteOneUserDto);
+
+          break;
+        default:
+          break;
       }
-      setIsOpenModalGroup(!isOpenModalGroup);
-      onHandle();
     } catch (error) {
       notifyError(error);
     }
   };
+
   return (
     <div>
       <Modal
@@ -99,15 +150,16 @@ const ModalUser = ({
         toggle={() => setIsOpenModalGroup(!isOpenModalGroup)}
       >
         <ModalHeader toggle={() => setIsOpenModalGroup(!isOpenModalGroup)}>
-          Basic Modal
+          Group Modal
         </ModalHeader>
         <ModalBody>
-          <Form className="auth-register-form mt-2">
+          <Form className="auth-register-form mt-2" style={styleAction}>
             <div className="mb-1">
               <Label className="form-label" for="register-name">
                 Name
               </Label>
               <Input
+                defaultValue={name}
                 type="text"
                 id="register-name"
                 placeholder="johndoe"
@@ -116,36 +168,32 @@ const ModalUser = ({
               />
             </div>
             <div className="mb-1">
-              <Label className="form-label">Basic</Label>
-              <ReactSelect
-                value={enumToFormatSelected(GroupEnum, groupType)}
-                className="react-select"
-                options={enumToFormatSelectOptions(GroupEnum)}
-                isClearable={false}
-                onChange={(e) => onChangeGroupType(e)}
+              <Label className="form-label" for="register-email">
+                Email
+              </Label>
+              <Input
+                defaultValue={email}
+                type="email"
+                id="register-email"
+                placeholder="john@example.com"
+                onChange={(e) => onChangeEmail(e)}
               />
             </div>
             <div className="mb-1">
-              <Label className="form-label" for="register-secret-key">
-                Secret Key
+              <Label className="form-label" for="register-password">
+                Password
               </Label>
               <Input
-                type="text"
-                id="register-secret-key"
-                placeholder="secret key ..."
-                onChange={(e) => onChangeSecretKey(e)}
+                type="email"
+                id="register-password"
+                placeholder="password"
+                onChange={(e) => onChangePassword(e)}
               />
-            </div>
-            <div className="mb-1">
-              <Label className="form-label" for="register-secret-key">
-                Secret Name
-              </Label>
-              <Input
-                type="text"
-                id="register-secret-key"
-                placeholder="secret key ..."
-                onChange={(e) => onChangeSecretName(e)}
-              />
+              {/* <InputPasswordToggle
+                className="input-group-merge"
+                id="register-password"
+                onChange={(e) => onChangePassword(e)}
+              /> */}
             </div>
           </Form>
         </ModalBody>

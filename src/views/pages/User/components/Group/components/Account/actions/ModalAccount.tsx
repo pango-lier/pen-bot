@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { CREATE_ACCOUNT } from "api/grapth/account/createAccount";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import {
   Button,
@@ -16,9 +16,11 @@ import { ACTION_ENUM } from "utility/enum/actions";
 import { notifyError, notifySuccess } from "utility/notify";
 import { IGroup } from "../../columns";
 import { IAccount } from "../components/columns";
+import { UPDATE_ACCOUNT } from "api/grapth/account/updateAccount";
+import { DELETE_ACCOUNT } from "api/grapth/account/deleteAccount";
 
 interface IModalIAccountProps {
-  account: IAccount | undefined;
+  row: IAccount | undefined;
   group: IGroup;
   isOpenModalGroup: boolean;
   setIsOpenModalGroup: Function;
@@ -29,14 +31,31 @@ const ModalAccount = ({
   isOpenModalGroup,
   setIsOpenModalGroup,
   group,
-  account,
+  row,
   onHandleModal,
   action,
 }: IModalIAccountProps) => {
-  const [name, setName] = useState<String>("");
+  const [name, setName] = useState<string>("");
   const [active, setActive] = useState<number>(1);
-  const [proxyId, setProxyId] = useState<String>("");
-  const [proxyType, setProxyType] = useState<String>("");
+  const [proxyId, setProxyId] = useState<string>("");
+  const [proxyType, setProxyType] = useState<string>("");
+  const [styleAction, setStyleAction] = useState<
+    React.CSSProperties | undefined
+  >();
+
+  useEffect(() => {
+    console.log(row);
+    if (row) {
+      setName(row.name);
+      setActive(row.active ? 1 : 0);
+      setProxyId(row.proxyId);
+      setProxyType(row.proxyType);
+    }
+  }, [row]);
+  useEffect(() => {
+    if (action === ACTION_ENUM.Delete)
+      setStyleAction({ pointerEvents: "none", opacity: "0.7" });
+  }, [action]);
 
   const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e && e?.target) {
@@ -60,9 +79,26 @@ const ModalAccount = ({
     }
   };
 
-  const [createOneAccountDto] = useMutation(CREATE_ACCOUNT, {
+  const [createAction] = useMutation(CREATE_ACCOUNT, {
     onCompleted: (result) => {
-      notifySuccess("Sig up is success.");
+      notifySuccess("Create is success.");
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+  const [updateAction] = useMutation(UPDATE_ACCOUNT, {
+    onCompleted: (result) => {
+      notifySuccess("Update is success.");
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const [deleteAction] = useMutation(DELETE_ACCOUNT, {
+    onCompleted: (result) => {
+      notifySuccess("Delete is success.");
     },
     onError: (error) => {
       notifyError(error);
@@ -74,7 +110,7 @@ const ModalAccount = ({
   ) => {
     switch (action) {
       case ACTION_ENUM.Create:
-        await createOneAccountDto({
+        const account = await createAction({
           variables: {
             name,
             active: active === 1,
@@ -84,9 +120,33 @@ const ModalAccount = ({
           },
         });
         setIsOpenModalGroup(!isOpenModalGroup);
-        onHandleModal();
+        onHandleModal(account.data.createOneAccountDto);
         break;
+      case ACTION_ENUM.Edit:
+        const update = await updateAction({
+          variables: {
+            id: row?.id,
+            name,
+            active: active === 1,
+            proxyId,
+            proxyType,
+            groupId: group.id,
+          },
+        });
+        setIsOpenModalGroup(!isOpenModalGroup);
+        onHandleModal(update.data.updateOneAccountDto);
 
+        break;
+      case ACTION_ENUM.Delete:
+        const destroy = await deleteAction({
+          variables: {
+            id: row?.id,
+          },
+        });
+        setIsOpenModalGroup(!isOpenModalGroup);
+        onHandleModal(destroy.data.deleteOneAccountDto);
+
+        break;
       default:
         break;
     }
@@ -101,12 +161,13 @@ const ModalAccount = ({
           Basic Modal
         </ModalHeader>
         <ModalBody>
-          <Form className="auth-register-form mt-2">
+          <Form className="auth-register-form mt-2" style={styleAction}>
             <div className="mb-1">
               <Label className="form-label" for="register-name">
                 Name
               </Label>
               <Input
+                defaultValue={name}
                 type="text"
                 id="register-name"
                 placeholder="johndoe"
@@ -120,6 +181,7 @@ const ModalAccount = ({
                 Proxy Id
               </Label>
               <Input
+                defaultValue={proxyId}
                 id="proxy-id"
                 type="text"
                 placeholder="Proxy Id ..."
@@ -131,6 +193,7 @@ const ModalAccount = ({
                 Proxy Type
               </Label>
               <Input
+                defaultValue={proxyType}
                 id="proxy-type"
                 type="text"
                 placeholder="proxy type ..."
@@ -139,14 +202,14 @@ const ModalAccount = ({
             </div>
             <div className="mb-1">
               <Label for="switch-primary" className="form-check-label">
-                Primary
+                Active account
               </Label>
               <div className="form-switch form-check-primary">
                 <Input
                   type="switch"
                   id="switch-primary"
                   name="primary"
-                  value={active}
+                  defaultValue={active}
                   onChange={(e) => onChangeActive(e)}
                 />
               </div>

@@ -11,7 +11,7 @@ export const UPDATE_USER = gql`
     updateOneUserDto(
       input: {
         id: $id
-        UpdateUserInput: {
+        update: {
           email: $email
           password: $password
           name: $name

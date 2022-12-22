@@ -10,7 +10,7 @@ import {
 import { Table } from "reactstrap";
 import { useLazyQuery } from "@apollo/client";
 import { GET_USERS } from "api/grapth/user/getUsers";
-import Group from "./sub";
+import Group from "./Group";
 import IconTextPagination from "./PaginationIconText";
 import { notifyError } from "utility/notify";
 import { ACTION_ENUM } from "utility/enum/actions";
@@ -45,6 +45,16 @@ const BaseTable = () => {
     if (action === ACTION_ENUM.Create) {
       const _data = [...data];
       _data.unshift(row);
+      setData(_data);
+    } else if (action === ACTION_ENUM.Edit) {
+      const _data = data.map((i) => {
+        if (i.id === row.id) i = row;
+        return i;
+      });
+      setData(_data);
+    } else if (action === ACTION_ENUM.Delete) {
+      let _data = data.filter((i) => i.id !== row.id);
+      console.log(_data);
       setData(_data);
     }
     setIsOpenModalGroup(false);
